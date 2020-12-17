@@ -1,9 +1,35 @@
-![莫魯貝可](resources/morpeko.jpg)
-
 # Morpeko 莫魯貝可
+
+![莫魯貝可](resources/morpeko.jpg)
 
 莫魯貝可在飽腹時，性情平和，不易暴怒；但是飢餓時，莫魯貝可的性情隨激素狀態的改變而變得凶暴。與皮丘、皮卡丘、雷丘同屬於電鼠類寶可夢。
 
+## Commands
+
+```bash
+## 安裝
+$ yarn
+
+## 跑起來
+$ yarn start
+
+## Watch mode
+$ yarn start:dev
+
+## Production mode
+$ yarn start:prod
+
+## 單元測試
+$ yarn test
+
+## E2E test
+$ yarn test:e2e
+
+## Coverage
+$ yarn test:cov
+```
+
+## Introduction
 
 ### Profit-sharing system
 
