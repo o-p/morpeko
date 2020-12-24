@@ -76,8 +76,8 @@ export default class CompanyService {
 
   /** 增加公司收益 */
   addProfit(profit: Profit) {
-    const total = this.seasonProfit += profit;
-    return total;
+    this.seasonProfit += profit;
+    return this.seasonProfit;
   }
 
   /** 贖回 */
