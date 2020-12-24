@@ -16,9 +16,7 @@ $ MAX_CLAIMABLE_SEASONS=999 yarn start
 $ yarn test
 ```
 
-## Introduction
-
-### Profit-sharing system
+## Profit-sharing system
 
 Assuming we need to share our profit with massive investors.
 
