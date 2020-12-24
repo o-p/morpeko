@@ -1,8 +1,4 @@
-# Morpeko 莫魯貝可
-
-![莫魯貝可](resources/morpeko.jpg)
-
-莫魯貝可在飽腹時，性情平和，不易暴怒；但是飢餓時，莫魯貝可的性情隨激素狀態的改變而變得凶暴。與皮丘、皮卡丘、雷丘同屬於電鼠類寶可夢。
+# Backend Assignment
 
 ## Commands
 
@@ -10,23 +6,14 @@
 ## 安裝
 $ yarn
 
-## 跑起來
+## 直接跑，預設讀取 .env -> .env.development
 $ yarn start
 
-## Watch mode
-$ yarn start:dev
-
-## Production mode
-$ yarn start:prod
+## 調整 MAX_CLAIMABLE_SEASONS 參數後執行
+$ MAX_CLAIMABLE_SEASONS=999 yarn start
 
 ## 單元測試
 $ yarn test
-
-## E2E test
-$ yarn test:e2e
-
-## Coverage
-$ yarn test:cov
 ```
 
 ## Introduction
@@ -35,31 +22,31 @@ $ yarn test:cov
 
 Assuming we need to share our profit with massive investors.
 
-+ We share profit per season. Investors with shareholding can claim their season profit after the season has ended.
+- We share profit per season. Investors with shareholding can claim their season profit after the season has ended.
 
-+ During each season, we may addProfit one or more times.
+- During each season, we may addProfit one or more times.
 
-+ Investors can invest, withdraw many times during a season, but we only consider the share status at the end of the season.
+- Investors can invest, withdraw many times during a season, but we only consider the share status at the end of the season.
 
-+ The season profit will expire in __MaxClaimableSeason__ seasons
+- The season profit will expire in **MaxClaimableSeason** seasons
 
 #### Requirements
 
-+ There is a implemented function getCurrentSeason()
+- There is a implemented function getCurrentSeason()
 
-+ Support different __MaxClaimableSeason__.
+- Support different **MaxClaimableSeason**.
 
-+ Support __invest__, __addProfit__, __withdraw__, and __claim__ methods.
+- Support **invest**, **addProfit**, **withdraw**, and **claim** methods.
 
-+ Add unit tests to increase confidence in the correctness of your implementation
+- Add unit tests to increase confidence in the correctness of your implementation
 
-+ Write necessary comments to help readers understand the code.
+- Write necessary comments to help readers understand the code.
 
-+ Write a README file with step-by-step instructions on how to build and run the tests
+- Write a README file with step-by-step instructions on how to build and run the tests
 
-+ Choose one of Golang, Python, C, C++, TypeScript, JavaScript, or Solidity as your implementation language
+- Choose one of Golang, Python, C, C++, TypeScript, JavaScript, or Solidity as your implementation language
 
-+ Assume we have infinite precision with your number type (double, float, number…, etc)
+- Assume we have infinite precision with your number type (double, float, number…, etc)
 
 #### Example
 
