@@ -67,4 +67,34 @@ describe('CompanyService', () => {
     // claim 		by Dave  // Receives 20
     expect(company.claim('Dave')).toBe(20);
   });
+
+  test.each`
+    method        | amount
+    ${'withdraw'} | ${0}
+    ${'withdraw'} | ${2}
+    ${'withdraw'} | ${-3}
+    ${'withdraw'} | ${NaN}
+    ${'invest'}   | ${0}
+    ${'invest'}   | ${-1}
+    ${'invest'}   | ${NaN}
+  `(
+    '在 invest $1 後接著 $method $amount 應拋錯',
+    async ({ method, amount }) => {
+      const app: TestingModule = await Test.createTestingModule({
+        providers: [
+          CompanyService,
+          { provide: ConfigService.name, useFactory: () => ({}) },
+        ],
+      }).compile();
+
+      const investor = 'Chris';
+      const company = app.get<CompanyService>(CompanyService);
+      company.invest({ investor, amount: 1 });
+      expect(() => company[method]({ investor, amount })).toThrow(Error);
+      expect(company.withdraw({ investor, amount: 1 })).toEqual({
+        total: 0,
+        withdrawn: 1,
+      });
+    },
+  );
 });
