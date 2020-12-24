@@ -20,7 +20,6 @@ export default class CompanyController {
   /** 公司概況 */
   @Get('')
   info(@Res() res): string {
-    this.logger.debug('@info');
     return res.json({
       name: 'Morpeko',
       season: this.company.getCurrentSeason(),
