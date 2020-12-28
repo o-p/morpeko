@@ -33,24 +33,31 @@ export function iteration(text: string, pattern: string): boolean {
   let indexP = 0;
   let tester = '';
 
-  while (indexP < pattern.length) {
+  while (indexP < pattern.length || anchorT < text.length) {
     const char = text[indexT];
     tester = pattern[indexP];
 
+    // 如果判斷子為 * 重設 anchor
     if (tester === '*') {
       anchorT = indexT;
-      anchorP = indexP;
-      indexP += 1;
+      anchorP = ++indexP;
       continue;
     }
 
+    // 剛好 text & pattern 都測試到終點，通過測試
+    if (tester === undefined && char === undefined) {
+      return true;
+    }
+
+    // 單字節符合規則，繼續前進
     if (tester === '.' || tester === char) {
       indexP += 1;
       indexT += 1;
       continue;
     }
 
-    if (anchorT < indexT) {
+    // 不合規則，判斷 index 是否可以往回至 anchor
+    if (anchorT < text.length) {
       indexT = ++anchorT;
       indexP = anchorP;
       continue;
@@ -58,7 +65,6 @@ export function iteration(text: string, pattern: string): boolean {
 
     return false;
   }
-
   return tester === '*' || indexT === text.length;
 }
 
