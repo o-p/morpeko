@@ -1,61 +1,56 @@
+type Valuify<Origin, Scalarized> = (value: Origin) => Scalarized;
+type RemovedValue<T> = T | null;
+type TreeAfterRemove<T> = Tree<T> | null;
 
-
-export class Tree {
-  static insert(
-    value: any,
-    tree: Tree | null = null,
-    valueOf = v => v,
-  ): Tree {
+export class Tree<T> {
+  static insert<V>(
+    value: V,
+    tree: Tree<V> | null = null,
+    valueOf: Valuify<V, any> = (v: V) => v,
+  ): Tree<V> | null {
     if (tree instanceof Tree) {
-      if (valueOf(value) >= valueOf(tree.value)) {
-        tree.right = Tree.insert(value, tree.right);
-      } else {
-        tree.left = Tree.insert(value, tree.right);
-      }
-
-      return tree;
+      return valueOf(value) >= valueOf(tree.value as V)
+        ? new Tree(tree.value, tree.left, Tree.insert(value, tree.right, valueOf))
+        : new Tree(tree.value, Tree.insert(value, tree.left, valueOf), tree.right);
     }
-
     return new Tree(value);
   }
 
-  static deleteMin(tree: Tree, parent: Tree | null = null): Tree {
+  static deleteMin<V>(tree?: Tree<V>): [TreeAfterRemove<V>, RemovedValue<V>] {
+    if (!(tree instanceof Tree)) {
+      return [null, null];
+    }
+
     if (tree.left instanceof Tree) {
-      return Tree.deleteMin(tree.left, tree);
+      const [removed, value] = Tree.deleteMin(tree.left);
+      return [new Tree(tree.value, removed, tree.right), value];
     }
 
-    const { right } = tree;
-    tree.right = null;
-
-    if (parent instanceof Tree) {
-      parent.left = right;
-    }
-
-    return tree;
+    return [tree.right, tree.value as V];
   }
 
-  constructor(public value: any, public left = null, public right = null) {}
+  constructor(
+    public value?: T,
+    public left: Tree<T> | null = null,
+    public right: Tree<T> | null = null,
+  ) {}
 }
 
-const findM = (
-  list: any[],
-  m = 100,
-  valueOf = v => v,
-) => {
+const findM = (list: any[], m = 100, valueOf = (v: any) => v) => {
   let counts = 0;
 
   const tree = list.reduce((full, value) => {
     counts += 1;
-    const result = Tree.insert(value, full, valueOf);
+    const result = Tree.insert(value, full, valueOf) as Tree<any>;
 
     if (counts > m) {
-      Tree.deleteMin(result);
+      return Tree.deleteMin(result)[0];
     }
     return result;
   }, null);
 
   if (m > 0 && counts >= m) {
-    return Tree.deleteMin(tree).value;
+    return Tree.deleteMin(tree)[1];
   }
   return null;
 };
