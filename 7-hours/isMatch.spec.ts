@@ -1,29 +1,35 @@
 import isMatch, { recuration, iteration } from './isMatch';
 
-describe('基本案例', (): void => {
+describe('簡易測試', (): void => {
   test.each`
-    text            | pattern          | expected
-    ${''}           | ${''}            | ${true}
-    ${'a'}          | ${''}            | ${false}
-    ${''}           | ${'a'}           | ${false}
-    ${'abcabbaabc'} | ${'abcabbaabc'}  | ${true}
-    ${'abcabbaabc'} | ${'ab......bc'}  | ${true}
-    ${'abcabbaabc'} | ${'ab.......bc'} | ${false}
-    ${'abcabbaabc'} | ${'ab.*.bc'}     | ${true}
-    ${'abcabbaabc'} | ${'ab*ab*ab*'}   | ${true}
-    ${'abcabbaabc'} | ${'a*'}          | ${true}
-    ${'abcabbaabc'} | ${'a*c'}         | ${true}
-    ${'abcabbaabc'} | ${'*c'}          | ${true}
-    ${'abcabbaabc'} | ${'*'}           | ${true}
+    text       | pattern   | expected
+    ${''}      | ${''}     | ${true}
+    ${''}      | ${'a'}    | ${false}
+    ${'0'}     | ${''}     | ${false}
+    ${'aa'}    | ${'a'}    | ${false}
+    ${'aa'}    | ${'*'}    | ${true}
+    ${'cb'}    | ${'.a'}   | ${false}
+    ${'cb'}    | ${'.b'}   | ${true}
+    ${'acdcb'} | ${'*a*b'} | ${true}
   `('$"$text" <-> "$pattern"', ({ text, pattern, expected }): void => {
     expect(recuration(text, pattern)).toBe(expected);
     expect(iteration(text, pattern)).toBe(expected);
   });
 });
 
-describe('高複雜度案例', (): void => {
+describe('完整測試', (): void => {
   test.each`
     text            | pattern                  | expected
+    ${''}           | ${''}                    | ${true}
+    ${''}           | ${'a'}                   | ${false}
+    ${'0'}          | ${''}                    | ${false}
+    ${'aa'}         | ${'a'}                   | ${false}
+    ${'aa'}         | ${'*'}                   | ${true}
+    ${'cb'}         | ${'.a'}                  | ${false}
+    ${'cb'}         | ${'.b'}                  | ${true}
+    ${'acdcb'}      | ${'*a*b'}                | ${true}
+    ${'acdcb'}      | ${'a*c.b'}               | ${false}
+    ${'b'}          | ${'*.*.*'}               | ${false}
     ${'abcbcbcbcd'} | ${'a**bc*bc*'}           | ${true}
     ${'abcbcbcbcd'} | ${'********..*****..*k'} | ${false}
     ${'abcabbaabc'} | ${'ab*ab*ab*ab*'}        | ${false}

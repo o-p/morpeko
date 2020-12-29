@@ -1,14 +1,26 @@
+const WILDCARD_SINGLE_CHARACTER = '.';
+const WILDCARD_ANY_CHARACTERS = '*';
+
+interface Wildcards {
+  SINGLE: string;
+  ANY: string;
+}
+
 /** 透過 Recuration 方式比對，複雜的 * 案例會超過 Max Call Stack */
-export function recuration(text: string, pattern: string): boolean {
+export function recuration(
+  text: string,
+  pattern: string,
+  WILDCARD: Wildcards = { SINGLE: WILDCARD_SINGLE_CHARACTER, ANY: WILDCARD_ANY_CHARACTERS },
+): boolean {
   const [char] = text;
   const [tester] = pattern;
 
   switch (tester) {
     // *: 0 ~ ∞ chars
-    case '*':
+    case WILDCARD.ANY:
       return (
         // 分解為: isMatch 0 chars || isMatch 1 ~ ∞ chars
-        recuration(text, pattern.slice(1)) || recuration(text.slice(1), pattern)
+        recuration(text, pattern.slice(1), WILDCARD) || recuration(text.slice(1), pattern, WILDCARD)
       );
     // 已經沒有後續 pattern, 但如果還有 char, 則必定 false
     case undefined:
@@ -16,8 +28,8 @@ export function recuration(text: string, pattern: string): boolean {
     // 單字節判斷
     default:
       return (
-        (tester === '.' || tester === char) &&
-        recuration(text.slice(1), pattern.slice(1))
+        (tester === WILDCARD.SINGLE || tester === char) &&
+        recuration(text.slice(1), pattern.slice(1), WILDCARD)
       );
   }
 }
@@ -26,46 +38,51 @@ export function recuration(text: string, pattern: string): boolean {
  * 透過 Iteration 方式比對，要注意 text 與 pattern 兩邊各自要獨立的 anchor
  * 另外每個 * 只要遇到新的 * 就可以刷新兩個 anchor，因為新的 * 必定可以涵蓋前者的範圍
  */
-export function iteration(text: string, pattern: string): boolean {
+export function iteration(
+  text: string,
+  pattern: string,
+  WILDCARD: Wildcards = { SINGLE: WILDCARD_SINGLE_CHARACTER, ANY: WILDCARD_ANY_CHARACTERS },
+): boolean {
   let anchorT = text.length;
   let anchorP = pattern.length;
   let indexT = 0;
   let indexP = 0;
-  let tester = '';
 
-  while (indexP < pattern.length || anchorT < text.length) {
+  // 持續判斷至 pattern 到底且無法往回
+  while (true) {
     const char = text[indexT];
-    tester = pattern[indexP];
+    const tester = pattern[indexP];
 
-    // 如果判斷子為 * 重設 anchor
-    if (tester === '*') {
-      anchorT = indexT;
-      anchorP = ++indexP;
-      continue;
-    }
-
-    // 剛好 text & pattern 都測試到終點，通過測試
-    if (tester === undefined && char === undefined) {
-      return true;
-    }
-
-    // 單字節符合規則，繼續前進
-    if (tester === '.' || tester === char) {
+    // 同時到底才算正確
+    if (char === tester) {
+      if (tester === undefined) return true;
       indexP += 1;
       indexT += 1;
       continue;
     }
 
-    // 不合規則，判斷 index 是否可以往回至 anchor
+    if (tester === WILDCARD.SINGLE && char !== undefined) {
+      indexP += 1;
+      indexT += 1;
+      continue;
+    }
+
+    // 符合任意字串時，刷新 anchor，從下一個 tester 開始判斷
+    if (tester === WILDCARD.ANY) {
+      anchorT = indexT;
+      anchorP = ++indexP;
+      continue;
+    }
+
+    // 可以返回的情況
     if (anchorT < text.length) {
-      indexT = ++anchorT;
       indexP = anchorP;
+      indexT = ++anchorT;
       continue;
     }
 
     return false;
   }
-  return tester === '*' || indexT === text.length;
 }
 
 /**
